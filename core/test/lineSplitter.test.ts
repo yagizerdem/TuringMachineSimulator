@@ -1,5 +1,6 @@
 import { describe, expect, test } from "@jest/globals";
 import { lineSplitter } from "../src/parser/lineSplitter";
+import { LineType } from "../src/parser/line";
 
 describe("lineSplitter", () => {
   test("Fast binary palindrome", () => {
@@ -59,12 +60,14 @@ qAccept,_,_,-,-
       lineNo: 16,
       rawText: "name: Fast binary palindrome",
       normalizedText: "name: Fast binary palindrome",
+      lineType: LineType.NAME,
     });
 
     expect(result[20]).toEqual({
       lineNo: 45,
       rawText: "qAccept,_,_,-,-",
       normalizedText: "qAccept,_,_,-,-",
+      lineType: LineType.READ_WRITE_MOVE,
     });
   });
 });
@@ -225,18 +228,21 @@ q7,_,_,-,<
       lineNo: 11,
       rawText: "name: Logarithm of length",
       normalizedText: "name: Logarithm of length",
+      lineType: LineType.NAME,
     });
 
     expect(result[3]).toEqual({
       lineNo: 15,
       rawText: "q0,0,_",
       normalizedText: "q0,0,_",
+      lineType: LineType.READ_WRITE_MOVE,
     });
 
     expect(result[result.length - 1]).toEqual({
       lineNo: 142,
       rawText: "q7,_,_,-,<",
       normalizedText: "q7,_,_,-,<",
+      lineType: LineType.READ_WRITE_MOVE,
     });
   });
 });

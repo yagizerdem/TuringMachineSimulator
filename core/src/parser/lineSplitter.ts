@@ -1,4 +1,4 @@
-import { type Line } from "./line";
+import { LineType, type Line } from "./line";
 
 export function lineSplitter(input: string): Line[] {
   const lines: Line[] = [];
@@ -15,6 +15,7 @@ export function lineSplitter(input: string): Line[] {
         lineNo: lineNo,
         rawText: currentLine,
         normalizedText: currentLine.trim(),
+        lineType: classifyLine(currentLine.trim()),
       };
       if (newLine.normalizedText.length > 0) lines.push(newLine);
       lineNo++;
@@ -30,9 +31,17 @@ export function lineSplitter(input: string): Line[] {
       lineNo: lineNo,
       rawText: currentLine,
       normalizedText: currentLine.trim(),
+      lineType: classifyLine(currentLine.trim()),
     };
     lines.push(newLine);
   }
 
   return lines;
+}
+
+export function classifyLine(text: string): LineType {
+  if (/s*name\s*:/.test(text)) return LineType.NAME;
+  if (/s*init\s*:/.test(text)) return LineType.INIT;
+  if (/s*accept\s*:/.test(text)) return LineType.ACCEPT;
+  return LineType.READ_WRITE_MOVE;
 }
