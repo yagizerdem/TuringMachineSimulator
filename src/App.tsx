@@ -1,9 +1,10 @@
+import { CodeEditor } from "./components/code-editor";
 import { DefaultLayout } from "./layout";
 
 function App() {
   return (
     <DefaultLayout>
-      <div></div>
+      <CodeEditor value="string here" />
     </DefaultLayout>
   );
 }
