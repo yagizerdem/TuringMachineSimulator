@@ -1,7 +1,11 @@
-import { Fragment } from "react";
+import { DefaultLayout } from "./layout";
 
 function App() {
-  return <Fragment></Fragment>;
+  return (
+    <DefaultLayout>
+      <div></div>
+    </DefaultLayout>
+  );
 }
 
 export default App;
