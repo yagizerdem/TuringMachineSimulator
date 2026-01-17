@@ -48,7 +48,7 @@ export class Simulator {
       const tapeSymbols = this.getTapeSymbols();
 
       const match = transition.read.every(
-        (symbol, index) => symbol === tapeSymbols[index] || symbol === "_", // _ matches everything
+        (symbol, index) => symbol === (tapeSymbols[index] || "_"),
       );
 
       if (match) {

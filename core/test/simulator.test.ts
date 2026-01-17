@@ -5,7 +5,6 @@ import { LineType } from "../src/parser/line";
 import { syntaxChecker } from "../src/parser/syntaxChecker";
 import { TapeSize } from "../src/enum/tapeSize";
 import { Simulator, StepResult } from "../src/simulator/simulator";
-import { assert } from "console";
 
 describe("Binary numbers divisible by 3", () => {
   const input = `
@@ -230,7 +229,9 @@ q5,_,_,1,-,-,-
     simulator.tapes[0].set(0, "1");
     simulator.tapes[0].set(1, "0");
     simulator.tapes[0].set(2, "1");
+
     simulator.tapes[0].set(3, "#");
+
     simulator.tapes[0].set(4, "1");
     simulator.tapes[0].set(5, "1");
     simulator.tapes[0].set(6, "0");
@@ -247,5 +248,82 @@ q5,_,_,1,-,-,-
         break;
       }
     } while (result.continue);
+
+    // Check the result on tape 3
+
+    console.log(simulator.tapes[2]);
+
+    expect(simulator.tapes[2].get(-3)).toBe("1");
+    expect(simulator.tapes[2].get(-2)).toBe("0");
+    expect(simulator.tapes[2].get(-1)).toBe("1");
+    expect(simulator.tapes[2].get(0)).toBe("1");
+  });
+});
+
+describe("Fast binary palindrome", () => {
+  const input = `
+name: Fast binary palindrome
+init: qCopy
+accept: qAccept
+
+qCopy,0,_
+qCopy,0,0,>,>
+
+qCopy,1,_
+qCopy,1,1,>,>
+
+qCopy,_,_
+qReturn,_,_,-,<
+
+qReturn,_,0
+qReturn,_,0,-,<
+
+qReturn,_,1
+qReturn,_,1,-,<
+
+qReturn,_,_
+qTest,_,_,<,>
+
+qTest,0,0
+qTest,0,0,<,>
+
+qTest,1,1
+qTest,1,1,<,>
+
+qTest,_,_
+qAccept,_,_,-,-
+    `.trim();
+
+  test("ACCEPT", () => {
+    const lines = lineSplitter(input);
+    syntaxChecker(lines, () => {}, TapeSize.DOUBLE);
+    const graph = graphBuilder(lines);
+    const simulator = new Simulator();
+    simulator.init(graph, TapeSize.DOUBLE);
+
+    // Input: 101#110 (5 + 6)
+    simulator.tapes[0].set(0, "1");
+    simulator.tapes[0].set(1, "0");
+    simulator.tapes[0].set(2, "1");
+
+    let result: StepResult | null = null;
+    do {
+      result = simulator.step();
+      if (result.rejected) {
+        expect(false).toBe(true);
+        break;
+      }
+      // should accept
+      if (result.accepted) {
+        break;
+      }
+    } while (result.continue);
+
+    // Check the result on tape 2
+    console.log(simulator.tapes[1]);
+
+    expect(simulator.tapes[1].get(0)).toBe("1");
+    expect(simulator.tapes[1].get(1)).toBe("0");
+    expect(simulator.tapes[1].get(2)).toBe("1");
   });
 });
