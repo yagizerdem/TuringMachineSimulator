@@ -291,6 +291,35 @@ describe("syntaxCheckerSingleTape", () => {
     }
   });
 
+  test("Multiple init states", () => {
+    try {
+      const input = `
+        name: Unary increment
+        init: q0 q1
+        // comment
+        accept: qf
+
+        q0,0 // comment
+        q0,0,>
+
+        // comment
+        q0,_
+        qf,_,-
+      `.trim();
+
+      const lines = lineSplitter(input);
+      syntaxChecker(lines, () => {}, TapeSize.SINGLE);
+
+      fail("Expected syntax error for multiple init states");
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        console.error(`Syntax Error on line ${err.lineNumber}: ${err.message}`);
+      } else {
+        fail("Unexpected error type thrown");
+      }
+    }
+  });
+
   test("Multi Init", () => {
     try {
       const input = `
