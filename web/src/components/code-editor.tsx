@@ -1,8 +1,16 @@
+import { cn } from "@/lib/utils";
 import * as monaco from "monaco-editor";
 import { useEffect, useRef } from "react";
 
-export function CodeEditor({ value }: { value: string }) {
+interface CodeEditorProps {
+  value: string;
+  className?: string;
+  getCode?: (code: string) => void;
+}
+
+export function CodeEditor({ value, className, getCode }: CodeEditorProps) {
   const ref = useRef<HTMLDivElement | null>(null);
+  const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
 
   useEffect(() => {
     if (!ref.current) return;
@@ -18,13 +26,13 @@ export function CodeEditor({ value }: { value: string }) {
         tokenizer: {
           root: [
             [/\/\/.*/, "comment"],
-            [/[><_]/, "operator"],
+            [/[><_-]/, "operator"], // - stay > move right < move left _ (EPS)
             [/\b\d+\b/, "number"],
             [/\b[a-zA-Z]+\d+\b/, "state"],
             [/\b[a-zA-Z]+\b/, "string"],
           ],
         },
-      }
+      },
     );
 
     const model = monaco.editor.createModel(value, "turingMachineScript");
@@ -58,13 +66,25 @@ export function CodeEditor({ value }: { value: string }) {
       model: model,
     } as monaco.editor.IStandaloneEditorConstructionOptions);
 
-    editor.setModel(model);
+    editorRef.current = editor;
+
+    editor.onDidChangeModelContent(() => {
+      getCode?.(editor.getValue());
+    });
+
+    // Handle window resize
+    const handleResize = () => {
+      editor.layout();
+    };
+
+    window.addEventListener("resize", handleResize);
 
     return () => {
+      window.removeEventListener("resize", handleResize);
       editor.dispose();
       model.dispose();
     };
-  }, [ref.current, value]);
+  }, []);
 
-  return <div ref={ref} className="w-1/2 h-96 my-10"></div>;
+  return <div ref={ref} className={cn("h-full w-full", className)}></div>;
 }

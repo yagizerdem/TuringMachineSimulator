@@ -6,7 +6,9 @@ export function DefaultLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full h-fit flex items-center justify-center p-4">
         <img src={logo} className="bg-foreground" />
       </div>
-      <div className="w-full h-full ">{children}</div>
+      <div className="w-full h-full flex flex-row  overflow-hidden">
+        {children}
+      </div>
     </div>
   );
 }
