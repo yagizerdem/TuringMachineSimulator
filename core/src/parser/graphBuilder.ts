@@ -72,6 +72,22 @@ export function graphBuilder(lines: Line[]): Graph {
       transition.move = writeMoveTokens.slice(readTokens.length);
 
       const curNode = graph.nodes.get(curState);
+
+      // already contains transifiton with same read symbols overwrite it
+      for (let i = 0; i < curNode.transitions.length; i++) {
+        const existingTransition = curNode.transitions[i];
+        if (
+          existingTransition.read.length === transition.read.length &&
+          existingTransition.read.every(
+            (value, index) => value === transition.read[index],
+          )
+        ) {
+          curNode.transitions[i] = transition;
+          isReadLine = !isReadLine;
+          continue;
+        }
+      }
+
       curNode.transitions.push(transition);
 
       isReadLine = !isReadLine;

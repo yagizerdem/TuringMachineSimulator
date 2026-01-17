@@ -289,7 +289,7 @@ function validateConsumeChar(
     error: null,
   };
 
-  if (/^[a-zA-Z0-9_]$/.test(char) == false) {
+  if (/^[^,\s]$/.test(char) == false) {
     result.isValid = false;
     result.error = new SyntaxError({
       message: `Invalid symbol '${char}'`,
