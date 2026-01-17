@@ -74,6 +74,7 @@ export function graphBuilder(lines: Line[]): Graph {
       const curNode = graph.nodes.get(curState);
 
       // already contains transifiton with same read symbols overwrite it
+      let found = false;
       for (let i = 0; i < curNode.transitions.length; i++) {
         const existingTransition = curNode.transitions[i];
         if (
@@ -83,12 +84,14 @@ export function graphBuilder(lines: Line[]): Graph {
           )
         ) {
           curNode.transitions[i] = transition;
-          isReadLine = !isReadLine;
-          continue;
+          found = true;
+          break;
         }
       }
 
-      curNode.transitions.push(transition);
+      if (!found) {
+        curNode.transitions.push(transition);
+      }
 
       isReadLine = !isReadLine;
     }

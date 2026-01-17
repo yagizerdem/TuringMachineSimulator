@@ -16,6 +16,9 @@ describe("graphBuilderDoubleTape", () => {
         qCopy,0,_
         qCopy,_,0,>,>
 
+        qCopy,0,_
+        qCopy,_,0,>,< // overwrite qCopy,0,_ transition
+
         qCopy,1,_
         qCopy,1,1,>,>
 
@@ -43,7 +46,7 @@ describe("graphBuilderDoubleTape", () => {
 
     expect(transition0.read).toEqual(["0", "_"]);
     expect(transition0.write).toEqual(["_", "0"]);
-    expect(transition0.move).toEqual([">", ">"]);
+    expect(transition0.move).toEqual([">", "<"]);
     expect(transition0.toState).toBe("qCopy");
 
     const transition1 = node!.transitions[1];
