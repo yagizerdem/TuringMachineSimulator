@@ -1,4 +1,4 @@
-class Graph {
+export class Graph {
   public name: string;
   public startState: string;
   public acceptStates: Set<string>;
@@ -19,12 +19,13 @@ class Graph {
   }
 }
 
-class GraphNode {
+export class GraphNode {
   public state: string;
   public transitions: Transition[] = [];
 }
 
-class Transition {
+export class Transition {
+  public toState: string;
   public read: string[];
   public write: string[];
   public move: string[];
