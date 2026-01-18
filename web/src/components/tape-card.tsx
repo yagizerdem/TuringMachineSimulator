@@ -32,6 +32,7 @@ export function TapeCard({ graph }: TapeCardProps) {
   const [duration, setDuration] = useState(1);
   const [autoPlay, setAutoPlay] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const isAnimating = useRef(false);
 
   // calculate cell width on resize and initial render
   useEffect(() => {
@@ -51,7 +52,10 @@ export function TapeCard({ graph }: TapeCardProps) {
   }, [graph]);
 
   function executeStep() {
-    if (!simulator) return;
+    if (!simulator || isAnimating.current) return;
+
+    isAnimating.current = true;
+
     const prevHeadPositions = [...simulator.heads];
     const response: StepResult = simulator.step();
 
@@ -99,6 +103,7 @@ export function TapeCard({ graph }: TapeCardProps) {
 
     // reset offset after animation
     setTimeout(() => {
+      isAnimating.current = false;
       setOffset1(0);
       setOffset2(0);
       setOffset3(0);
@@ -120,6 +125,12 @@ export function TapeCard({ graph }: TapeCardProps) {
 
     setSimulator(simulator);
     setAutoPlay(false);
+  }
+
+  function halt() {
+    setAutoPlay(false);
+    setIsPaused(false);
+    setSimulator(null);
   }
 
   useEffect(() => {
@@ -323,7 +334,11 @@ export function TapeCard({ graph }: TapeCardProps) {
           >
             <PauseIcon className="inline " />
           </Button>
-          <Button className="mt-4 w-12 cursor-pointer" variant={"outline"}>
+          <Button
+            className="mt-4 w-12 cursor-pointer"
+            variant={"outline"}
+            onMouseUp={() => halt()}
+          >
             <SquareIcon className="inline " />
           </Button>
           <Button
