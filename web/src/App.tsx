@@ -80,7 +80,67 @@ function App() {
           </div>
         )}
         <div className="w-1/2 flex flex-col mx-auto min-w-96 mb-10 ">
-          <div className="flex items-end justify-end">
+          <div className="flex items-start justify-start">
+            <DropdownMenu>
+              <DropdownMenuTrigger className="w-64 bg-secondary mx-4 mb-4 p-4 font-bold  cursor-pointer">
+                Tutorials
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  className="h-10 cursor-pointer"
+                  onMouseUp={() => {
+                    window
+                      .open(
+                        "https://assets.turingmachinesimulator.com/static/pdf/what_is_a_turing_machine.pdf",
+                        "_blank",
+                      )
+                      ?.focus();
+                  }}
+                >
+                  What is turing machine?
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="h-10 cursor-pointer"
+                  onMouseUp={() => {
+                    window
+                      .open(
+                        "https://assets.turingmachinesimulator.com/static/pdf/tutorial_for_turing_machine.pdf",
+                        "_blank",
+                      )
+                      ?.focus();
+                  }}
+                >
+                  The programming language
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="h-10 cursor-pointer"
+                  onMouseUp={() => {
+                    window
+                      .open(
+                        "https://assets.turingmachinesimulator.com/static/pdf/programming_example.pdf",
+                        "_blank",
+                      )
+                      ?.focus();
+                  }}
+                >
+                  A simple example
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  className="h-10 cursor-pointer"
+                  onMouseUp={() => {
+                    window
+                      .open(
+                        "https://assets.turingmachinesimulator.com/static/pdf/multiple_tape_turing_machines.pdf",
+                        "_blank",
+                      )
+                      ?.focus();
+                  }}
+                >
+                  Multi-tape Turing machines
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <DropdownMenu>
               <DropdownMenuTrigger className="w-64 bg-secondary mx-4 mb-4 p-4 font-bold  cursor-pointer">
                 Examples
@@ -133,7 +193,8 @@ function App() {
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
+          </div>
+          <div className="flex items-end justify-end">
             <DropdownMenu>
               <DropdownMenuTrigger className="w-64 bg-secondary mb-4 p-4 font-bold  cursor-pointer">
                 Select Tape Count
