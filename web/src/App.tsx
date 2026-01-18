@@ -19,6 +19,17 @@ import { TapeSize } from "../../core/src/enum/tapeSize";
 import { graphBuilder } from "../../core/src/parser/graphBuilder";
 import gsap from "gsap";
 import { Graph } from "../../core/src/parser/graph";
+import {
+  Binary_addition,
+  Binary_Multiplication,
+  Binary_numbers_divisible_by_3,
+  Binary_palindrome,
+  Decimal_to_binary,
+  Duplicate_binary_string,
+  Even_amount_of_zeros,
+  Fast_binary_palindrome,
+  Logarithm_of_length,
+} from "./programs";
 
 function App() {
   const [code, setCode] = useState("");
@@ -77,21 +88,49 @@ function App() {
               <DropdownMenuContent>
                 <DropdownMenuLabel>1 Tape</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onMouseUp={() => setCode("jlagkljh")}>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Binary_numbers_divisible_by_3)}
+                >
                   Divisible by 3 Algorithm
                 </DropdownMenuItem>
-                <DropdownMenuItem>Binary palindrome</DropdownMenuItem>
-                <DropdownMenuItem>Decimal to binary</DropdownMenuItem>
-                <DropdownMenuItem>Even amount of zeros</DropdownMenuItem>
-                <DropdownMenuItem>Duplicate binary string</DropdownMenuItem>
+                <DropdownMenuItem onMouseUp={() => setCode(Binary_palindrome)}>
+                  Binary palindrome
+                </DropdownMenuItem>
+                <DropdownMenuItem onMouseUp={() => setCode(Decimal_to_binary)}>
+                  Decimal to binary
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Even_amount_of_zeros)}
+                >
+                  Even amount of zeros
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Duplicate_binary_string)}
+                >
+                  Duplicate binary string
+                </DropdownMenuItem>
                 <DropdownMenuLabel>2 Tapes</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Fast binary palindrome</DropdownMenuItem>
-                <DropdownMenuItem>Logarithm of length</DropdownMenuItem>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Fast_binary_palindrome)}
+                >
+                  Fast binary palindrome
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Logarithm_of_length)}
+                >
+                  Logarithm of length
+                </DropdownMenuItem>
                 <DropdownMenuLabel>3 Tapes</DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Binary addition</DropdownMenuItem>
-                <DropdownMenuItem>Binary Multiplication</DropdownMenuItem>
+                <DropdownMenuItem onMouseUp={() => setCode(Binary_addition)}>
+                  Binary addition
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onMouseUp={() => setCode(Binary_Multiplication)}
+                >
+                  Binary Multiplication
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
 

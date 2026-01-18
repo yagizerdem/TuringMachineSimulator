@@ -133,6 +133,8 @@ export function TapeCard({ graph }: TapeCardProps) {
     setSimulator(null);
   }
 
+  console.log(isPaused);
+
   useEffect(() => {
     const loop = setInterval(() => {
       if (autoPlay && !isPaused) {
@@ -190,7 +192,7 @@ export function TapeCard({ graph }: TapeCardProps) {
                 return (
                   <div
                     key={i}
-                    className="h-full bg-blue-500 border-2 relative"
+                    className="h-full bg-blue-500 border-2 relative flex items-center justify-center font-bold"
                     style={{
                       width: CELL_WIDTH,
                       minWidth: CELL_WIDTH,
@@ -235,7 +237,7 @@ export function TapeCard({ graph }: TapeCardProps) {
                 return (
                   <div
                     key={i}
-                    className="h-full bg-blue-500 border-2"
+                    className="h-full bg-blue-500 border-2 flex items-center justify-center font-bold"
                     style={{
                       width: CELL_WIDTH,
                       minWidth: CELL_WIDTH,
@@ -279,7 +281,7 @@ export function TapeCard({ graph }: TapeCardProps) {
                 return (
                   <div
                     key={i}
-                    className="h-full bg-blue-500 border-2"
+                    className="h-full bg-blue-500 border-2 flex items-center justify-center font-bold"
                     style={{
                       width: CELL_WIDTH,
                       minWidth: CELL_WIDTH,
@@ -323,7 +325,10 @@ export function TapeCard({ graph }: TapeCardProps) {
           <Button
             className="mt-4 w-12 cursor-pointer"
             variant={"outline"}
-            onMouseUp={() => setAutoPlay((prev) => !prev)}
+            onMouseUp={() => {
+              setIsPaused(false);
+              setAutoPlay(true);
+            }}
           >
             <PlayIcon className="inline " />
           </Button>
