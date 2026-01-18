@@ -1,12 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Graph } from "../../../core/src/parser/graph";
-import { Simulator } from "../../../core/src/simulator/simulator";
+import {
+  Simulator,
+  type StepResult,
+} from "../../../core/src/simulator/simulator";
 import { useApp } from "@/provider/app-provider";
 import { Input } from "@/components/ui/input";
 import { Button } from "./ui/button";
 import { PauseIcon, PlayIcon, SkipForwardIcon, SquareIcon } from "lucide-react";
 import { Slider } from "@/components/ui/slider";
-import { Tape } from "./tape";
 import { TapeSize } from "../../../core/src/enum/tapeSize";
 
 const CELL_COUNT = 23;
@@ -27,6 +29,9 @@ export function TapeCard({ graph }: TapeCardProps) {
   const [offset2, setOffset2] = useState(0);
   const [offset3, setOffset3] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const [duration, setDuration] = useState(1);
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [isPaused, setIsPaused] = useState(false);
 
   // calculate cell width on resize and initial render
   useEffect(() => {
@@ -42,16 +47,13 @@ export function TapeCard({ graph }: TapeCardProps) {
   }, []);
 
   useEffect(() => {
-    if (!graph) return;
-    const simulator = new Simulator();
-    simulator.init(graph, tapeSize);
-    setSimulator(simulator);
+    setSimulator(null);
   }, [graph]);
 
   function executeStep() {
     if (!simulator) return;
     const prevHeadPositions = [...simulator.heads];
-    simulator.step();
+    const response: StepResult = simulator.step();
 
     // animate tape movement
     if (
@@ -91,40 +93,83 @@ export function TapeCard({ graph }: TapeCardProps) {
       }
     }
 
+    if (!simulator.stepResult.continue) {
+      setAutoPlay(false);
+    }
+
     // reset offset after animation
     setTimeout(() => {
       setOffset1(0);
       setOffset2(0);
       setOffset3(0);
       setSimulator(simulator.clone()); // refresh ui
-    }, 300);
+    }, duration * 1000);
   }
 
   function loadTape() {
-    if (!inputRef.current || !simulator) return;
+    if (!graph) return;
+    if (!inputRef.current) return;
+
+    const simulator = new Simulator();
+    simulator.init(graph, tapeSize);
     const input = inputRef.current.value;
 
     for (let i = 0; i < input.length; i++) {
       simulator.tapes[0].set(i, input[i]);
     }
 
-    setSimulator(simulator.clone());
+    setSimulator(simulator);
+    setAutoPlay(false);
   }
+
+  useEffect(() => {
+    const loop = setInterval(() => {
+      if (autoPlay && !isPaused) {
+        executeStep();
+      }
+    }, duration * 1000);
+
+    return () => {
+      clearInterval(loop);
+    };
+  }, [autoPlay, duration, isPaused, simulator]);
 
   return (
     <div className="w-3/4 h-fit mx-auto  border-2 p-5 mb-5">
       <h1 className="text-center font-bold text-2xl ">{graph?.name}</h1>
       <hr className="my-3 font-bold " />
-      <div className="w-full h-full my-10 overflow-hidden">
+      <div className="w-full h-12 flex flex-row justify-between">
+        <div className="font-bold select-none">
+          Steps : {simulator?.stepCount}
+        </div>
+        <div className="font-bold">State : {simulator?.currentState}</div>
+        <div>
+          {simulator?.stepResult.accepted && (
+            <div>
+              <span className="font-bold text-green-400 select-none">
+                Accepted
+              </span>
+            </div>
+          )}
+          {simulator?.stepResult.rejected && (
+            <div>
+              <span className="font-bold text-red-400 select-none">
+                Rejected
+              </span>
+            </div>
+          )}
+        </div>
+      </div>
+      <div className="w-full h-full my-10 overflow-hidden ">
         {(tapeSize == TapeSize.SINGLE ||
           tapeSize == TapeSize.DOUBLE ||
           tapeSize == TapeSize.TRIPLE) && (
-          <div ref={tape1Ref} className="w-full h-12 my-10 overflow-hidden">
+          <div ref={tape1Ref} className="w-full h-fit my-10 overflow-hidden">
             <div
-              className="h-full flex"
+              className="h-12 flex"
               style={{
                 transform: `translateX(${offset1 - CELL_WIDTH}px)`,
-                transition: "transform 0.2s ease",
+                transition: `transform ${duration}s ease`,
               }}
             >
               {[...Array(CELL_COUNT + 2)].map((_, i) => {
@@ -134,27 +179,42 @@ export function TapeCard({ graph }: TapeCardProps) {
                 return (
                   <div
                     key={i}
-                    className="h-full bg-blue-500 border-2"
+                    className="h-full bg-blue-500 border-2 relative"
                     style={{
                       width: CELL_WIDTH,
                       minWidth: CELL_WIDTH,
                     }}
                   >
-                    {symbol}
+                    <span>{symbol == "_" ? " " : symbol}</span>
                   </div>
                 );
               })}
+            </div>
+            <div
+              style={{
+                width: CELL_WIDTH / 2,
+                marginLeft: CELL_WIDTH * 11 + CELL_WIDTH / 4,
+                marginTop: -8,
+              }}
+            >
+              <div
+                className="w-0 h-0 
+                rotate-180
+            border-l-[12px] border-l-transparent
+            border-r-[12px] border-r-transparent
+            border-t-[20px] border-t-white"
+              ></div>
             </div>
           </div>
         )}
 
         {(tapeSize == TapeSize.DOUBLE || tapeSize == TapeSize.TRIPLE) && (
-          <div ref={tape2Ref} className="w-full h-12 my-10 overflow-hidden">
+          <div ref={tape2Ref} className="w-full h-fit my-10 overflow-hidden">
             <div
-              className="h-full flex"
+              className="h-12 flex"
               style={{
                 transform: `translateX(${offset2 - CELL_WIDTH}px)`,
-                transition: "transform 0.2s ease",
+                transition: `transform ${duration}s ease`,
               }}
             >
               {[...Array(CELL_COUNT + 2)].map((_, i) => {
@@ -170,21 +230,36 @@ export function TapeCard({ graph }: TapeCardProps) {
                       minWidth: CELL_WIDTH,
                     }}
                   >
-                    {symbol}
+                    {symbol == "_" ? " " : symbol}
                   </div>
                 );
               })}
+            </div>
+            <div
+              style={{
+                width: CELL_WIDTH / 2,
+                marginLeft: CELL_WIDTH * 11 + CELL_WIDTH / 4,
+                marginTop: -8,
+              }}
+            >
+              <div
+                className="w-0 h-0 
+                rotate-180
+            border-l-[12px] border-l-transparent
+            border-r-[12px] border-r-transparent
+            border-t-[20px] border-t-white"
+              ></div>
             </div>
           </div>
         )}
 
         {tapeSize == TapeSize.TRIPLE && (
-          <div ref={tape3Ref} className="w-full h-12 my-10 overflow-hidden">
+          <div ref={tape3Ref} className="w-full h-fit my-10 overflow-hidden">
             <div
-              className="h-full flex"
+              className="h-12 flex"
               style={{
                 transform: `translateX(${offset3 - CELL_WIDTH}px)`,
-                transition: "transform 0.2s ease",
+                transition: `transform ${duration}s ease`,
               }}
             >
               {[...Array(CELL_COUNT + 2)].map((_, i) => {
@@ -199,10 +274,25 @@ export function TapeCard({ graph }: TapeCardProps) {
                       minWidth: CELL_WIDTH,
                     }}
                   >
-                    {symbol}
+                    {symbol == "_" ? " " : symbol}
                   </div>
                 );
               })}
+            </div>
+            <div
+              style={{
+                width: CELL_WIDTH / 2,
+                marginLeft: CELL_WIDTH * 11 + CELL_WIDTH / 4,
+                marginTop: -8,
+              }}
+            >
+              <div
+                className="w-0 h-0 
+                rotate-180
+            border-l-[12px] border-l-transparent
+            border-r-[12px] border-r-transparent
+            border-t-[20px] border-t-white"
+              ></div>
             </div>
           </div>
         )}
@@ -213,16 +303,24 @@ export function TapeCard({ graph }: TapeCardProps) {
           <Button
             className="ml-2 cursor-pointer "
             onMouseUp={loadTape}
-            disabled={!simulator}
+            disabled={!graph}
           >
             Load Tape
           </Button>
         </div>
         <div className="flex flex-row w-1/3 gap-1 items-center justify-center">
-          <Button className="mt-4 w-12 cursor-pointer" variant={"outline"}>
+          <Button
+            className="mt-4 w-12 cursor-pointer"
+            variant={"outline"}
+            onMouseUp={() => setAutoPlay((prev) => !prev)}
+          >
             <PlayIcon className="inline " />
           </Button>
-          <Button className="mt-4 w-12 cursor-pointer" variant={"outline"}>
+          <Button
+            className="mt-4 w-12 cursor-pointer"
+            variant={"outline"}
+            onMouseUp={() => setIsPaused((prev) => !prev)}
+          >
             <PauseIcon className="inline " />
           </Button>
           <Button className="mt-4 w-12 cursor-pointer" variant={"outline"}>
@@ -231,7 +329,13 @@ export function TapeCard({ graph }: TapeCardProps) {
           <Button
             className="mt-4 w-12 cursor-pointer"
             variant={"outline"}
-            onMouseUp={() => executeStep()}
+            onMouseUp={() => {
+              if (autoPlay) {
+                if (isPaused) executeStep();
+              } else {
+                executeStep();
+              }
+            }}
           >
             <SkipForwardIcon className="inline " />
           </Button>
@@ -245,7 +349,10 @@ export function TapeCard({ graph }: TapeCardProps) {
             min={0}
             max={100}
             step={1}
-            onValueChange={(value) => setSpeed(Math.max(value[0], 10))}
+            onValueChange={(value) => {
+              setSpeed(Math.max(value[0], 10));
+              setDuration(1 - speed / 100);
+            }}
           />
         </div>
       </footer>
