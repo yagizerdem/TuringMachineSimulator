@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CodeEditor } from "./components/code-editor";
-import { Tape } from "./components/tape";
+import { TapeCard } from "./components/tape-card";
 import { Button } from "./components/ui/button";
 import { DefaultLayout } from "./layout";
 import { lineSplitter } from "../../core/src/parser/lineSplitter";
@@ -10,36 +10,66 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useApp } from "./provider/app-provider";
 import { TapeSize } from "../../core/src/enum/tapeSize";
+import { graphBuilder } from "../../core/src/parser/graphBuilder";
+import gsap from "gsap";
+import { Graph } from "../../core/src/parser/graph";
 
 function App() {
   const [code, setCode] = useState("");
   const { setTapeSize, tapeSize } = useApp();
+  const [error, setError] = useState<string | null>(null);
+  const errorPanelRef = useRef<HTMLDivElement | null>(null);
+  const [graph, setGraph] = useState<Graph | null>(null);
 
   function compile() {
     try {
+      setError(null);
       const lines = lineSplitter(code);
       console.log(lines);
-      // syntaxChecker(lines, ()=> {}, );
+      syntaxChecker(lines, () => {}, tapeSize);
+      const graph = graphBuilder(lines);
+      setGraph(graph);
     } catch (err) {
       if (err instanceof SyntaxError) {
+        setError(`Line ${err.lineNumber}: ${err.message}`);
       }
     }
   }
 
+  useEffect(() => {
+    if (errorPanelRef.current && error) {
+      gsap.fromTo(
+        errorPanelRef.current,
+        { opacity: 0, y: -20 },
+        { opacity: 1, y: 0, duration: 0.5 },
+      );
+    }
+
+    if (errorPanelRef && !error) {
+      gsap.to(errorPanelRef.current, { opacity: 0, y: -20, duration: 0.5 });
+    }
+  }, [error]);
+
   return (
     <DefaultLayout>
       <div className="w-full h-full  overflow-y-scroll">
-        <Tape />
-        <div className="w-1/2 flex flex-col mx-auto min-w-96 my-10 ">
+        <TapeCard graph={graph} />
+        {error && (
+          <div
+            className="w-1/2  mx-auto my-1 p-4  font-bold text-chart-5"
+            ref={errorPanelRef}
+          >
+            Error: {error}
+          </div>
+        )}
+        <div className="w-1/2 flex flex-col mx-auto min-w-96 mb-10 ">
           <div className="flex items-end justify-end">
             <DropdownMenu>
-              <DropdownMenuTrigger className="w-64 bg-secondary my-4 p-4 font-bold  cursor-pointer">
+              <DropdownMenuTrigger className="w-64 bg-secondary mb-4 p-4 font-bold  cursor-pointer">
                 Select Tape Count
               </DropdownMenuTrigger>
               <DropdownMenuContent>
