@@ -86,5 +86,17 @@ export function CodeEditor({ value, className, getCode }: CodeEditorProps) {
     };
   }, []);
 
+  useEffect(() => {
+    if (!editorRef.current) return;
+
+    const editor = editorRef.current;
+    const model = editor.getModel();
+    if (!model) return;
+
+    if (model.getValue() !== value) {
+      model.setValue(value);
+    }
+  }, [value]);
+
   return <div ref={ref} className={cn("h-full w-full", className)}></div>;
 }

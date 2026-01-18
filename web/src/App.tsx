@@ -10,6 +10,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useApp } from "./provider/app-provider";
@@ -57,7 +59,7 @@ function App() {
   return (
     <DefaultLayout>
       <div className="w-full h-full  overflow-y-scroll">
-        <TapeCard graph={graph} />
+        {graph && <TapeCard graph={graph} />}
         {error && (
           <div
             className="w-1/2  mx-auto my-1 p-4  font-bold text-chart-5"
@@ -69,17 +71,57 @@ function App() {
         <div className="w-1/2 flex flex-col mx-auto min-w-96 mb-10 ">
           <div className="flex items-end justify-end">
             <DropdownMenu>
+              <DropdownMenuTrigger className="w-64 bg-secondary mx-4 mb-4 p-4 font-bold  cursor-pointer">
+                Examples
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuLabel>1 Tape</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onMouseUp={() => setCode("jlagkljh")}>
+                  Divisible by 3 Algorithm
+                </DropdownMenuItem>
+                <DropdownMenuItem>Binary palindrome</DropdownMenuItem>
+                <DropdownMenuItem>Decimal to binary</DropdownMenuItem>
+                <DropdownMenuItem>Even amount of zeros</DropdownMenuItem>
+                <DropdownMenuItem>Duplicate binary string</DropdownMenuItem>
+                <DropdownMenuLabel>2 Tapes</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Fast binary palindrome</DropdownMenuItem>
+                <DropdownMenuItem>Logarithm of length</DropdownMenuItem>
+                <DropdownMenuLabel>3 Tapes</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem>Binary addition</DropdownMenuItem>
+                <DropdownMenuItem>Binary Multiplication</DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
               <DropdownMenuTrigger className="w-64 bg-secondary mb-4 p-4 font-bold  cursor-pointer">
                 Select Tape Count
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onSelect={() => setTapeSize(TapeSize.SINGLE)}>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setGraph(null);
+                    setTapeSize(TapeSize.SINGLE);
+                  }}
+                >
                   1 (Single)
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setTapeSize(TapeSize.DOUBLE)}>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setGraph(null);
+                    setTapeSize(TapeSize.DOUBLE);
+                  }}
+                >
                   2 (Double)
                 </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => setTapeSize(TapeSize.TRIPLE)}>
+                <DropdownMenuItem
+                  onSelect={() => {
+                    setGraph(null);
+                    setTapeSize(TapeSize.TRIPLE);
+                  }}
+                >
                   3 (Triple)
                 </DropdownMenuItem>
               </DropdownMenuContent>
@@ -93,7 +135,7 @@ function App() {
           </div>
 
           <CodeEditor
-            value=""
+            value={code}
             className="w-full h-1/2 min-w-96 min-h-96 max-h-120"
             getCode={(code) => {
               setCode(code);
