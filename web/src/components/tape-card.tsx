@@ -310,9 +310,21 @@ export function TapeCard({ graph }: TapeCardProps) {
           </div>
         )}
       </div>
-      <footer className="flex flex-row justify-between items-center mx-auto mt-4">
+      <footer
+        className="
+  flex flex-col gap-6
+  items-center justify-center
+  sm:flex-row md:gap-0
+  md:justify-between md:items-center
+  mx-auto mt-4 w-full
+"
+      >
         <div className="w-1/3 h-fit">
-          <Input className="w-64" placeholder="enter input" ref={inputRef} />
+          <Input
+            className="sm:w-64 w-32 mb-2 sm:mb-0"
+            placeholder="enter input"
+            ref={inputRef}
+          />
           <Button
             className="ml-2 cursor-pointer "
             onMouseUp={loadTape}

@@ -248,6 +248,21 @@ function App() {
             Compile
           </Button>
         </div>
+        <footer className="w-full py-6 border-t border-muted-foreground/20 mt-8">
+          <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
+            <span>© {new Date().getFullYear()} Yagiz Erdem</span>
+
+            <span className="select-none">
+              Contact:{" "}
+              <a
+                href="mailto:yagizerdem819@gmail.com"
+                className="font-medium hover:underline"
+              >
+                yagizerdem819@gmail.com
+              </a>
+            </span>
+          </div>
+        </footer>
       </div>
     </DefaultLayout>
   );
