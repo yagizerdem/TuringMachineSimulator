@@ -2,6 +2,7 @@
   "name": "turingmachinesimulator",
   "version": "1.0.0",
   "main": "index.js",
+  "homepage": "https://yagizerdem.github.io/TuringMachineSimulator",
   "scripts": {
     "deploy": "gh-pages -d dist"
   },
