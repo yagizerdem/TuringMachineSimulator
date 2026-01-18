@@ -12,8 +12,16 @@ export class Simulator {
   public tapes: Map<number, string>[];
   public heads: number[];
   public currentState: string = undefined;
+  public stepCount: number = 0;
+  public stepResult: StepResult = {
+    accepted: false,
+    rejected: false,
+    continue: true,
+  };
 
   public init(graph: Graph, tapeSize: TapeSize) {
+    this.stepResult = { accepted: false, rejected: false, continue: true };
+    this.stepCount = 0;
     this.graph = graph;
     if (tapeSize === TapeSize.SINGLE) {
       this.tapes = [new Map<number, string>()];
@@ -33,6 +41,8 @@ export class Simulator {
   }
 
   public step(): StepResult {
+    if (!this.stepResult.continue) return this.stepResult;
+    this.stepCount++;
     const result: StepResult = {
       accepted: false,
       rejected: false,
@@ -41,6 +51,7 @@ export class Simulator {
     const curNode = this.graph.nodes.get(this.currentState);
     if (!curNode) {
       result.rejected = true;
+      this.stepResult = result;
       return result;
     }
 
@@ -75,20 +86,24 @@ export class Simulator {
         // check if moved to accept state
         if (this.graph.acceptStates.has(this.currentState)) {
           result.accepted = true;
+          this.stepResult = result;
           return result;
         }
 
         result.continue = true;
+        this.stepResult = result;
         return result;
       }
     }
 
     if (this.graph.acceptStates.has(this.currentState)) {
       result.accepted = true;
+      this.stepResult = result;
       return result;
     }
 
     result.rejected = true;
+    this.stepResult = result;
     return result;
   }
 
@@ -99,5 +114,16 @@ export class Simulator {
       symbols.push(this.tapes[i].get(this.heads[i]) || "_"); // _ represents blank symbol (EPS)
     }
     return symbols;
+  }
+
+  public clone(): Simulator {
+    const sim = new Simulator();
+    sim.graph = this.graph;
+    sim.tapes = this.tapes;
+    sim.heads = this.heads;
+    sim.currentState = this.currentState;
+    sim.stepCount = this.stepCount;
+    sim.stepResult = this.stepResult;
+    return sim;
   }
 }

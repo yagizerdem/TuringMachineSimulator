@@ -382,8 +382,9 @@ export function TapeCard({ graph }: TapeCardProps) {
             max={100}
             step={1}
             onValueChange={(value) => {
-              setSpeed(Math.max(value[0], 10));
-              setDuration(1 - speed / 100);
+              const newSpeed = Math.max(value[0], 10);
+              setSpeed(newSpeed);
+              setDuration(Math.max(0.05, 1 - newSpeed / 100));
             }}
           />
         </div>
