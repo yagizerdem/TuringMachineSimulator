@@ -30,6 +30,7 @@ import {
   Fast_binary_palindrome,
   Logarithm_of_length,
 } from "./programs";
+import { toast } from "sonner";
 
 function App() {
   const [code, setCode] = useState("");
@@ -46,9 +47,24 @@ function App() {
       syntaxChecker(lines, () => {}, tapeSize);
       const graph = graphBuilder(lines);
       setGraph(graph);
+      toast.success("Compilation successful!", {
+        position: "top-right",
+        duration: 3000,
+        richColors: true,
+      });
     } catch (err) {
       if (err instanceof SyntaxError) {
         setError(`Line ${err.lineNumber}: ${err.message}`);
+        toast.error(
+          `Compilation failed: Line ${err.lineNumber}: ${err.message}`,
+          {
+            position: "top-right",
+            duration: 5000,
+            richColors: true,
+          }
+        );
+      } else {
+        toast.error("Compilation failed due to an unexpected error.");
       }
     }
   }
@@ -58,7 +74,7 @@ function App() {
       gsap.fromTo(
         errorPanelRef.current,
         { opacity: 0, y: -20 },
-        { opacity: 1, y: 0, duration: 0.5 },
+        { opacity: 1, y: 0, duration: 0.5 }
       );
     }
 
@@ -92,7 +108,7 @@ function App() {
                     window
                       .open(
                         "https://assets.turingmachinesimulator.com/static/pdf/what_is_a_turing_machine.pdf",
-                        "_blank",
+                        "_blank"
                       )
                       ?.focus();
                   }}
@@ -105,7 +121,7 @@ function App() {
                     window
                       .open(
                         "https://assets.turingmachinesimulator.com/static/pdf/tutorial_for_turing_machine.pdf",
-                        "_blank",
+                        "_blank"
                       )
                       ?.focus();
                   }}
@@ -118,7 +134,7 @@ function App() {
                     window
                       .open(
                         "https://assets.turingmachinesimulator.com/static/pdf/programming_example.pdf",
-                        "_blank",
+                        "_blank"
                       )
                       ?.focus();
                   }}
@@ -131,7 +147,7 @@ function App() {
                     window
                       .open(
                         "https://assets.turingmachinesimulator.com/static/pdf/multiple_tape_turing_machines.pdf",
-                        "_blank",
+                        "_blank"
                       )
                       ?.focus();
                   }}

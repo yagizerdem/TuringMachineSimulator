@@ -1,4 +1,5 @@
 import logo from "../assets/logo4.png";
+import { Toaster } from "@/components/ui/sonner";
 
 export function DefaultLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export function DefaultLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full h-full flex flex-row  overflow-hidden">
         {children}
       </div>
+      <Toaster />
     </div>
   );
 }

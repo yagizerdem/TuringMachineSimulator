@@ -5,7 +5,7 @@ import { TapeSize } from "../enum/tapeSize";
 export function syntaxChecker(
   lines: Line[],
   onProcessLine: (lastProcessedIndex: number) => void,
-  tapeSize: TapeSize,
+  tapeSize: TapeSize
 ) {
   let hasInit = false;
   let hasName = false;
@@ -177,7 +177,7 @@ function validateReadLine(line: Line, tapeSize: TapeSize) {
     result.isValid = false;
     result.error = new SyntaxError({
       message: `Invalid symbol count: expected ${tapeSizeToNumber(
-        tapeSize,
+        tapeSize
       )} symbols for tape size ${TapeSize[tapeSize]}, but got ${
         tokens.length - 1
       }`,
@@ -218,7 +218,7 @@ function validateWriteMoveLine(line: Line, tapeSize: TapeSize) {
       message: `Invalid write/move pair count: expected ${
         tapeSizeToNumber(tapeSize) * 2
       } tokens (${tapeSizeToNumber(tapeSize)} write + ${tapeSizeToNumber(
-        tapeSize,
+        tapeSize
       )} move) for tape size ${TapeSize[tapeSize]}, but got ${
         tokens.length - 1
       }`,
@@ -262,14 +262,14 @@ function tapeSizeToNumber(tapeSize: TapeSize): number {
 
 function validateStateName(
   str: string,
-  lineNumber: number,
+  lineNumber: number
 ): checkLineSyntaxResult {
   const result: checkLineSyntaxResult = {
     isValid: true,
     error: null,
   };
 
-  if (/^[a-zA-Z][a-zA-Z0-9]*$/.test(str) == false) {
+  if (/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(str) == false) {
     result.isValid = false;
     result.error = new SyntaxError({
       message: `Invalid symbol '${str}'`,
@@ -282,7 +282,7 @@ function validateStateName(
 
 function validateConsumeChar(
   char: string,
-  lineNumber: number,
+  lineNumber: number
 ): checkLineSyntaxResult {
   const result: checkLineSyntaxResult = {
     isValid: true,
@@ -302,7 +302,7 @@ function validateConsumeChar(
 
 function validateMoveDirection(
   dir: string,
-  lineNumber: number,
+  lineNumber: number
 ): checkLineSyntaxResult {
   const result: checkLineSyntaxResult = {
     isValid: true,
